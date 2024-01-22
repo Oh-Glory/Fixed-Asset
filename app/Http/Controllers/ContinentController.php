@@ -50,6 +50,7 @@ class ContinentController extends Controller
         $this->validate($request, [
             'id' => 'required',
             'description' => 'required',
+            //tyt
         ]);
 
         try {
