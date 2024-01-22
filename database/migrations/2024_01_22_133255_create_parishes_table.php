@@ -15,6 +15,11 @@ class CreateParishesTable extends Migration
     {
         Schema::create('parishes', function (Blueprint $table) {
             $table->id();
+            $table->string('continent_id');
+            $table->string('region_id');
+            $table->string('province_id');
+            $table->string('description');
+
             $table->timestamps();
         });
     }
