@@ -32,6 +32,7 @@ class RegionController extends Controller
      {
          $data =Region::where('id', $request->id)->first();
          return json_encode($data);
+         //nextjjll
      }
  
     public function create()
