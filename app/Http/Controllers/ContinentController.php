@@ -14,7 +14,7 @@ class ContinentController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**
