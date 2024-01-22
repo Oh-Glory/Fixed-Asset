@@ -12,9 +12,13 @@ class RegionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getRegionList()
     {
-        //
+       
+       $data['regions'] = Region::all();
+       $data['continents'] = Continent::all();
+
+    return response()->json(['data'=>$data]);
     }
 
     /**
@@ -22,6 +26,15 @@ class RegionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+
+     public function getRegion(Request $request)
+     {
+         $data =Region::where('id', $request->id)->first();
+         return json_encode($data);
+         //nextjjll
+     }
+ 
     public function create()
     {
         //
