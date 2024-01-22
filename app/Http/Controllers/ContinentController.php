@@ -4,82 +4,74 @@ namespace App\Http\Controllers;
 
 use App\Models\Continent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 
 class ContinentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function getContinentList()
     {
-        //
+        $continents = Continent::all();
+        return response()->json(['data' => $continents]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function getContinent(Request $request)
     {
-        //
+        $data = Continent::find($request->id);
+
+        if (!$data) {
+            return response()->json(['error' => 'Continent not found'], 404);
+        }
+
+        return response()->json(['data' => $data]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function createContinent(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'description' => 'required|unique:continents,description',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 500);
+        }
+
+        try {
+            $continent = Continent::create($request->all());
+            return response()->json(['data' => $continent, 'message' => 'continent created succesfully'], 201);
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Continent  $continent
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Continent $continent)
+    public function updateContinent(Request $request)
     {
-        //
+        $id = $request->id;
+        $this->validate($request, [
+            'id' => 'required',
+            'description' => 'required',
+        ]);
+
+        try {
+            $continent = Continent::findOrFail($id);
+            $continent->update($request->all());
+            return response()->json(['data' => $continent]);
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Continent  $continent
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Continent $continent)
+    public function destroy(Request $request)
     {
-        //
-    }
+        $id = $request->id;
+        $continent = Continent::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Continent  $continent
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Continent $continent)
-    {
-        //
-    }
+        if (!$continent) {
+            return response()->json(['error' => 'Continent not found'], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Continent  $continent
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Continent $continent)
-    {
-        //
+        $continent->delete();
+
+        return response()->json(['message' => 'Continent deleted successfully']);
     }
 }
